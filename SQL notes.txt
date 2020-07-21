@@ -1,0 +1,165 @@
+-- SQL is a not procedural language, which means you can not write whole applications with it but you can interact with the data.
+/* It can be used to read/retrieve, write and update data.
+No SQL - Not only SQL, A mechanism for storage and retrieval of unstructured data modeled by means other than tabular relations in relational databases.
+
+Clauses and operators:*/
+WHERE
+BETWEEN
+IN --:: similar to between but specific column values go in paranthesis (). IN executes faster than OR
+OR --:: First condition is checked first
+AND --:: SQL processes AND operator before the OR operator if there is no paranthesis
+NOT
+<> --:: Not equal
+
+IS NULL
+ORDER BY --: It can take multiple columns. Must always be the last statement of the select statement. ORDER BY also sorts columns by DESC and ASC only to the columns it driectly precedes.
+
+
+--WILDCARDS:
+LIKE --:: '%Pizza' grabs anything ending with the word pizza, 'Pizza%' grabs anything after the word pizza. '%Pizza%' grabs anything before and after the word Pizza. '_pizza' also works except on DB2.
+--Downside is that it takes longer to run.*/
+
+--Math OPERATORS:
+--Aggregate functions:
+MIN
+MAX
+AVG
+COUNT
+SUM
+
+DISTINCT -- Cannot use DISTINCT on COUNT(*)
+
+/*order of operations:
+Paranthesis
+exponent
+multiplaction
+divide
+addition
+subtraction
+"Please excuse my dear aunt Sally"
+*/
+
+GROUP BY -- good idea to use ORDER BY with GROUP BY to sort the data because GROUP BY does not put the data in any order.
+WHERE --DOES NOT WORK ON GROUPS
+HAVING -- IS USED HERE TO FILTER Aggreations of COLUMNS
+
+/* Subqueries are Queries embedded into other Queries
+Subqueries merge data from multiple sources together.
+Performance slows down if there are multiple subqueries.
+Subquery SELECTS can only retrieve a single column.
+Subqueries process the innermost query first and then work outwords.
+*/
+
+-- Joins:
+Cartesian Joins: CROSS JOIN 
+10 items in Table1 and 10 items in table 2 will result in a CROSS JOIN table with 100 items
+Not frequently used and they are computationally taxing. Takes one table and multiplies it with the other.
+
+--Inner Join
+Returns only the records that are matching in both tables.
+
+--Alias 
+Temporarily renaming the table just for the time of the query.
+
+--Self joins
+Needs to add ALIAS to the table.
+
+--LEFT JOIN 
+(RIGHT AND FULL OUTER JOINS ARE NOT AVAILABLE IN SQLITE)
+Returns all the records from the left side and matching records from the right side table.
+In FULL OUTER JOIN, it returns all the entries in both the tables.
+
+-- UNION
+a UNION is used to combine the results of two or more queries or table sets into one table and one statement. 
+** Data type must be same
+** Columns must be in same order.
+Syntax:
+SELECT column_name(s) FROM table1
+UNION
+SELECT column_name(s) FROM table2;
+
+After each join check the number of outcomes.
+
+STRINGS
+CONCATENATE: Some applications need + sign but some use || (pipe)
+SUBSTRING: SUBSTR(Column name of string, number where to start substring, number of characters)
+TRIM: TRIM(STRING)
+UPPER: UPPER(String) or UCASE(String)
+LOWER: LOWER(String)
+
+SQLite DateTime formats
+DATE(timestring, modifier, modifier,...)
+TIME(timestring, modifier, modifier,...)
+DATETIME(timestring, modifier, modifier,...)
+JULIANDAY(timestring, modifier, modifier,...)
+STRFTIME(format,timestring, modifier, modifier,...)
+modifiers apply from left to right.
+
+example:
+SELECT Birthday,
+STRFTIME('%Y', Birthday) AS YEAR,
+STRFTIME('%m', Birthday) AS Month,
+STRFTIME('%d', Birthday) AS DAY
+FROM employees;
+
+To compute the current date:
+SELECT DATE('now')
+From employees;
+
+SELECT STRFTIME('%H %M %S %S', 'now')
+FROM employees;
+
+/*CASE STATEMENTS
+Mimics if-then-else statement*/
+
+CASE input_expression
+WHEN when_expression THEN result_expression
+ELSE  else_result_expression
+END;
+
+Example:
+SELECT employeeid
+,firstname
+,lastname
+,city
+,CASE City
+	WHEN 'Calgary' THEN 'Calgary'
+ELSE 'oTHER'
+	END calgary --> Calgary will become the name of the new column
+From emplyees;
+
+You can have multiple WHEN ... THEN .. statements;
+
+VIEWS
+Create a view without changing the schema. It lasts only for a session.
+
+Example:
+
+CREATE VIEW my_view
+AS
+SELECT
+A,
+B,
+C,
+FROM table;
+
+--To view the data from view you'll have to use a select statement
+SELECT *
+FROM my_view
+DROP VIEW my_view;
+
+CAST Function
+The CAST() function converts a value (of any type) into a specified datatype.
+Syntax : CAST(expression AS datatype(length))
+
+COALESCE() function
+The COALESCE() function returns the first non-null value in a list.
+Syntax: COALESCE(val1, val2, ...., val_n)
+
+WINDOWS FUNCTIONS:
+window function performs a calculation across a set of table rows that are somehow related to the current row. 
+This is comparable to the type of calculation that can be done with an aggregate function. But unlike regular aggregate functions, 
+use of a window function does not cause rows to become grouped into a single output row — the rows retain their separate identities. 
+Behind the scenes, the window function is able to access more than just the current row of the query result.
+
+https://www.postgresql.org/docs/9.1/tutorial-window.html
